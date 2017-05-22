@@ -23,11 +23,11 @@ android {
             // 项目里使用了自定义的View，且有自定义的属性时，需要修正一下xml命名空间里的包名
 //            android.applicationVariants.all { variant ->
 //                def buildType = variant.buildType
-//                def encoding = java.nio.charset.Charset.defaultCharset().toString()
+//                def encoding = java.nio.charset.StandardCharsets.UTF_8.toString()
 //                if (buildType.applicationIdSuffix) {
 //                    def defaultPackageId = variant.packageName.replaceAll(buildType.applicationIdSuffix,'')
 //                    variant.mergeResources.doLast {
-//                        def dir = file("${buildDir}/intermediates/res/${variant.dirName}/layout")
+//                        def dir = file("${buildDir}/intermediates/res/merged/${variant.dirName}/layout")
 //                        dir.listFiles().each { f->
 //                            String content = f.getText(encoding)
 //                            content = content.replaceAll("res/"+defaultPackageId, "res/"+variant.packageName)
@@ -36,6 +36,20 @@ android {
 //                    }
 //                }
 //            }
+
+            // 修改debug版app name
+            android.applicationVariants.all { variant ->
+                def buildType = variant.buildType
+                def encoding = java.nio.charset.StandardCharsets.UTF_8.toString()
+                if (buildType.applicationIdSuffix) {
+                    variant.mergeResources.doLast {
+                        def f = file("${buildDir}/intermediates/res/merged/${variant.dirName}/values/values.xml")
+                        String content = f.getText(encoding)
+                        content = content.replaceAll('TwoVersionDemo','TwoVersionDemoBeta')
+                        f.write(content,encoding)
+                    }
+                }
+            }
         }
     }
 }
